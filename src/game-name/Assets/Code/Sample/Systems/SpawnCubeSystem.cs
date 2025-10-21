@@ -1,6 +1,7 @@
 using Code.Common.Entity;
 using Code.Common.Extensions;
 using Entitas;
+using Entitas.Unity;
 using UnityEngine;
 
 namespace Code.Sample.Systems
@@ -12,7 +13,9 @@ namespace Code.Sample.Systems
 			GameObject cubePrefab = Resources.Load<GameObject>("SampleCube/RegularCube");
 			GameObject cube = Object.Instantiate(cubePrefab);
 
-			CreateEntity.Empty()
+			GameEntity cubeEntity = CreateEntity.Empty()
+				.AddId(Identifiers.NextId())
+				
 				.AddName("Regular Cube")
 				.With(x => x.isCube = true)
 				
@@ -21,6 +24,8 @@ namespace Code.Sample.Systems
 				.AddWorldRotation(Quaternion.identity)
 				
 				.With(x => x.isJustCreated = true);
+			
+			cube.Link(cubeEntity);
 		}
 	}
 }
