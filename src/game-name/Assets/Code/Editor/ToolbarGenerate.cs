@@ -55,15 +55,16 @@ namespace Code.Editor
 	        string scriptPath  = Path.Combine(projectRoot, "../../Jenny", "Jenny-Gen");
 
 #if UNITY_EDITOR_WIN
-			string batPath = Path.Combine(projectRoot, "../../Jenny", "Jenny-Gen.bat");
-            string comspec = Environment.GetEnvironmentVariable("ComSpec") 
-                             ?? @"C:\Windows\System32\cmd.exe";
+	        string jennyDir = Path.GetFullPath(Path.Combine(projectRoot, "../../Jenny"));
+	        string batPath = Path.Combine(jennyDir, "Jenny-Gen.bat");
+	        string comspec = Environment.GetEnvironmentVariable("ComSpec")
+	                         ?? @"C:\Windows\System32\cmd.exe";
 
-            ExecuteProcess(
-                comspec,
-                $"/c \"{batPath}\"",
-                projectRoot
-            );
+	        ExecuteProcess(
+		        comspec,
+		        $"/c \"\"{batPath}\"\"",
+		        jennyDir
+	        );
 #else
 	        ExecuteProcess(
 		        "/bin/zsh",
@@ -71,7 +72,6 @@ namespace Code.Editor
 		        projectRoot
 	        );
 #endif
-
         }
 
         private static void ExecuteProcess(string fileName, string arguments, string workingDirectory)
@@ -89,12 +89,11 @@ namespace Code.Editor
                     CreateNoWindow = true
                 };
 
-/*#if UNITY_EDITOR_WIN
-                // If your .bat calls 'dotnet' and it's not on PATH for Unity, uncomment:
-                // var current = Environment.GetEnvironmentVariable("PATH") ?? "";
-                // psi.EnvironmentVariables["PATH"] = 
-                //     (@"C:\Program Files\dotnet;" + current);
-#endif*/
+#if UNITY_EDITOR_WIN
+	            string current = Environment.GetEnvironmentVariable("PATH") ?? "";
+	            psi.EnvironmentVariables["PATH"] =
+		            (@"C:\Program Files\dotnet;" + current);
+#endif
 
                 using (var proc = Process.Start(psi))
                 {
